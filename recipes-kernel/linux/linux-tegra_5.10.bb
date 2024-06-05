@@ -18,10 +18,11 @@ LINUX_VERSION ?= "5.10.192"
 PV = "${LINUX_VERSION}+git"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}-${@bb.parse.vars_from_file(d.getVar('FILE', False),d)[1]}:"
 
-LINUX_VERSION_EXTENSION ?= "-l4t-${@'.'.join(d.getVar('L4T_VERSION').split('.'))}"
+LINUX_VERSION_EXTENSION ?= "-l4t-r${@'.'.join(d.getVar('L4T_VERSION').split('.'))}"
+LVE ?= "-l4t-${@'.'.join(d.getVar('L4T_VERSION').split('.'))}"
 SCMVERSION ??= "y"
 
-SRCBRANCH = "oe4t-patches${LINUX_VERSION_EXTENSION}"
+SRCBRANCH = "oe4t-patches${LVE}"
 SRCREV = "db857ecdbe10de229a3cf125831afd6226417eac"
 KBRANCH = "${SRCBRANCH}"
 SRC_REPO = "github.com/OE4T/linux-tegra-5.10.git;protocol=https"
