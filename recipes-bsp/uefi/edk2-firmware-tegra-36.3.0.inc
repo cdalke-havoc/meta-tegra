@@ -10,7 +10,9 @@ LIC_FILES_CHKSUM += "file://../edk2-nvidia-non-osi/Silicon/NVIDIA/Drivers/NvGopD
 
 inherit python3native
 
-DEPENDS += "dtc-native python3-kconfiglib-native"
+DEPENDS += "dtc-native python3-kconfiglib-native python3"
+
+PYTHON = "python3"
 
 SRC_URI_EDK2_PLATFORMS = "git://github.com/NVIDIA/edk2-platforms.git;protocol=https;branch=r36.3.0-updates"
 SRC_URI_EDK2_NVIDIA = "git://github.com/NVIDIA/edk2-nvidia.git;protocol=https;branch=r36.3.0-updates"
@@ -78,7 +80,7 @@ PACKAGES_PATH = "${@nvidia_edk2_packages_path(d)}"
 
 # BUILD_* taken from Silicon/NVIDIA/edk2nv/stuart/settings.py and
 #                    builder.py, plus Platform/NVIDIA/Jetson/PlatformBuild.py
-EDK2_EXTRA_BUILD = '-D "BUILDID_STRING=v${PV}" -D "BUILD_DATE_TIME=${@format_build_date(d)}" -D "BUILD_PROJECT_TYPE=EDK2" \
+EDK2_EXTRA_BUILD = '-D "BUILDID_STRING=v${PV}" -D "BUILD_DATE_TIME=${@format_build_date(d)}" -D "BUILD_PROJECT_TYPE=EDK2" -D "GENFW_FLAGS=--zero" \
                     -D BUILD_GUID=49a79a15-8f69-4be7-a30c-a172f44abce7 -DBUILD_NAME=Jetson'
 
 def format_build_date(d):

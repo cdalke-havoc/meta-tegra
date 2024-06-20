@@ -27,13 +27,13 @@ SRC_URI += "\
 do_install() {
     install -d ${D}${sbindir}
     install -m 0755 ${S}/etc/systemd/nv.sh ${D}${sbindir}/nvstartup
-    install -d ${D}/${sysconfdir}/udev/rules.d
-    install -m 0644 ${S}/etc/udev/rules.d/99-tegra-devices.rules ${D}${sysconfdir}/udev/rules.d
-    install -m 0644 ${S}/etc/udev/rules.d/99-tegra-mmc-ra.rules ${D}${sysconfdir}/udev/rules.d
-    install -m 0644 ${S}/etc/udev/rules.d/99-nv-l4t-usb-host-config.rules ${D}${sysconfdir}/udev/rules.d
+    install -d ${D}/${base_libdir}/udev/rules.d
+    install -m 0644 ${S}/etc/udev/rules.d/99-tegra-devices.rules ${D}${base_libdir}/udev/rules.d
+    install -m 0644 ${S}/etc/udev/rules.d/99-tegra-mmc-ra.rules ${D}${base_libdir}/udev/rules.d
+    install -m 0644 ${S}/etc/udev/rules.d/99-nv-l4t-usb-host-config.rules ${D}${base_libdir}/udev/rules.d
 
     install -d ${D}/opt/nvidia/l4t-bootloader-config
-    install -m 0755 ${UNPACKDIR}/nv-l4t-bootloader-config.sh ${D}/opt/nvidia/l4t-bootloader-config/nv-l4t-bootloader-config.sh
+    install -m 0755 ${WORKDIR}/nv-l4t-bootloader-config.sh ${D}/opt/nvidia/l4t-bootloader-config/nv-l4t-bootloader-config.sh
 
     install -d ${D}${sysconfdir}/X11
 
@@ -53,8 +53,8 @@ do_install() {
     # Please create an issue for a missing file in the passthrough
     # FIXME: create a mechanism to dynamically generate l4t.csv based on the installed libraries
     install -d ${D}${sysconfdir}/nvidia-container-runtime/host-files-for-container.d
-    install -m 0644 ${UNPACKDIR}/drivers.csv ${D}${sysconfdir}/nvidia-container-runtime/host-files-for-container.d
-    install -m 0644 ${UNPACKDIR}/devices.csv ${D}${sysconfdir}/nvidia-container-runtime/host-files-for-container.d
+    install -m 0644 ${WORKDIR}/drivers.csv ${D}${sysconfdir}/nvidia-container-runtime/host-files-for-container.d
+    install -m 0644 ${WORKDIR}/devices.csv ${D}${sysconfdir}/nvidia-container-runtime/host-files-for-container.d
 }
 
 do_install:append:tegra234() {
@@ -64,7 +64,7 @@ do_install:append:tegra234() {
 }
 
 PACKAGES = "${PN}-udev ${PN}-omx-tegra ${PN}-xorg ${PN}-nvstartup ${PN}-container-csv ${PN}-bootloader"
-FILES:${PN}-udev = "${sysconfdir}/udev/rules.d ${sysconfdir}/modprobe.d"
+FILES:${PN}-udev = "${base_libdir}/udev/rules.d ${sysconfdir}/modprobe.d"
 FILES:${PN}-xorg = "${sysconfdir}/X11"
 FILES:${PN}-omx-tegra = "${sysconfdir}/enctune.conf"
 FILES:${PN}-nvstartup = "${sbindir} ${sysconfdir}/sysctl.d"

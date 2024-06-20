@@ -19,8 +19,8 @@ do_install() {
     install -m 0644 ${S}/nv_nvsciipc_init.service ${D}${systemd_system_unitdir}
     install -m 0755 ${S}/nv_nvsciipc_init.init ${D}${sysconfdir}/init.d/nv_nvsciipc_init
     sed -i -e's,/usr/bin,${bindir},g' ${D}${systemd_system_unitdir}/nv_nvsciipc_init.service
-    install -d ${D}${sysconfdir}/udev/rules.d
-    install -m 0644 ${S}/61-nvsciipc.rules ${D}${sysconfdir}/udev/rules.d/
+    install -d ${D}${base_libdir}/udev/rules.d
+    install -m 0644 ${S}/61-nvsciipc.rules ${D}${base_libdir}/udev/rules.d/
 }
 
 inherit systemd update-rc.d
