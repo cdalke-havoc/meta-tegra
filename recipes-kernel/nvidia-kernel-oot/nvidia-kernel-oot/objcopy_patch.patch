@@ -1,0 +1,13 @@
+Index: nvidia-kernel-oot/nvdisplay/src/nvidia/Makefile
+===================================================================
+--- nvidia-kernel-oot.orig/nvdisplay/src/nvidia/Makefile
++++ nvidia-kernel-oot/nvdisplay/src/nvidia/Makefile
+@@ -26,7 +26,7 @@ SRC_COMMON = ../common
+ CONDITIONAL_CFLAGS :=
+ 
+ CFLAGS += -include $(SRC_COMMON)/sdk/nvidia/inc/cpuopsys.h
+-
++OBJCOPY ?= $(CROSS_COMPILE)objcopy
+ CFLAGS += -I kernel/inc
+ CFLAGS += -I interface
+ CFLAGS += -I $(SRC_COMMON)/sdk/nvidia/inc

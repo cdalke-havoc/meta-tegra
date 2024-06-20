@@ -9,27 +9,30 @@ TEGRA_UEFI_SIGNING_CLASS ??= "tegra-uefi-signing"
 inherit module deploy
 inherit ${TEGRA_UEFI_SIGNING_CLASS}
 
+DEPENDS += " coreutils-native "
+
 TEGRA_SRC_SUBARCHIVE = "\
     Linux_for_Tegra/source/kernel_oot_modules_src.tbz2 \
     Linux_for_Tegra/source/nvidia_kernel_display_driver_source.tbz2 \
 "
-TEGRA_SRC_SUBARCHIVE_OPTS = "-C ${UNPACKDIR}/${BPN}"
+TEGRA_SRC_SUBARCHIVE_OPTS = "-C ${WORKDIR}/${BPN}"
 require recipes-bsp/tegra-sources/tegra-sources-36.3.0.inc
 
 do_unpack[depends] += "tegra-binaries:do_preconfigure"
-do_unpack[dirs] += "${UNPACKDIR}/${BPN}"
+do_unpack[dirs] += "${WORKDIR}/${BPN}"
 
 unpack_makefile_from_bsp() {
-    cp ${L4T_BSP_SHARED_SOURCE_DIR}/source/Makefile ${UNPACKDIR}
-    [ -e ${S}/Makefile ] || cp ${UNPACKDIR}/Makefile ${S}/
+    cp ${L4T_BSP_SHARED_SOURCE_DIR}/source/Makefile ${WORKDIR}
+    [ -e ${S}/Makefile ] || cp ${WORKDIR}/Makefile ${S}/
 }
 do_unpack[postfuncs] += "unpack_makefile_from_bsp"
 
 SRC_URI += "file://0001-Makefile-update-for-OE-builds.patch \
             file://0002-Fix-nvdisplay-modules-builds.patch \
             file://0003-nvidia-drm-add-dependency-on-tegra-drm-module.patch \
-            file://0004-Fix-nvdisplay-conftest-gcc-14-compatibility-issues.patch \
 "
+#            file://0004-Fix-nvdisplay-conftest-gcc-14-compatibility-issues.patch \
+#"
 
 COMPATIBLE_MACHINE = "(tegra)"
 
@@ -61,6 +64,8 @@ TEGRA_OOT_REPLACEMENT_DRIVERS = "\
     tegra-bpmp-thermal \
     tegra-drm \
 "
+HOST_OBJCOPY_KERNEL_ARCH ?= "${TARGET_OBJCOPY_KERNEL_ARCH}"
+KERNEL_OBJCOPY = "${HOST_PREFIX}objcopy ${HOST_OBJCOPY_KERNEL_ARCH}"
 
 EXTRA_OEMAKE += '\
     IGNORE_PREEMPT_RT_PRESENCE=1 \
@@ -82,7 +87,7 @@ do_sign_dtbs() {
 do_sign_dtbs[dirs] = "${B}"
 do_sign_dtbs[depends] += "${TEGRA_UEFI_SIGNING_TASKDEPS}"
 
-addtask sign_dtbs after do_compile before do_install
+#addtask sign_dtbs after do_compile before do_install
 
 do_install() {
     unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
@@ -96,6 +101,10 @@ do_install() {
 do_deploy() {
     install -d ${DEPLOYDIR}/devicetree
     install -m 0644 ${B}/nvidia-oot/device-tree/platform/generic-dts/dtbs/* ${DEPLOYDIR}/devicetree/
+    #if [ ! -d ${DEPLOY_DIR_IMAGE}/devicetree ]; then
+    #    mkdir -p ${DEPLOY_DIR_IMAGE}/devicetree
+    #    cp -r ${B}/nvidia-oot/device-tree/platform/generic-dts/dtbs/* ${DEPLOY_DIR_IMAGE}/devicetree
+    #fi
 }
 
 addtask deploy before do_build after do_install
@@ -391,3 +400,8 @@ python oot_update_rprovides() {
             d.setVar('RDEPENDS:' + oot_pkg, newdepstr)
 }
 PACKAGESPLITFUNCS += "oot_update_rprovides"
+
+# Fixes objcopy failure on modules in the .debug
+# directory, which caused split_kernel_module_packages()
+# to fail.
+INHIBIT_PACKAGE_DEBUG_SPLIT = "1"

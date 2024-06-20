@@ -6,13 +6,12 @@ SRC_URI = "\
     file://nvidia-drm-modprobe.conf \
 "
 
-S = "${WORKDIR}/sources"
-UNPACKDIR = "${S}"
+S = "${WORKDIR}"
 
 COMPATIBLE_MACHINE = "(tegra234)"
 
 do_install() {
     install -d ${D}${sysconfdir}/modprobe.d ${D}${sysconfdir}/modules-load.d
-    install -m 0644 ${UNPACKDIR}/nvidia-drm-modprobe.conf ${D}${sysconfdir}/modprobe.d/nvidia-drm.conf
+    install -m 0644 ${WORKDIR}/nvidia-drm-modprobe.conf ${D}${sysconfdir}/modprobe.d/nvidia-drm.conf
     echo "nvidia-drm" > ${D}${sysconfdir}/modules-load.d/nvidia-drm.conf
 }
