@@ -79,6 +79,7 @@ do_install() {
     if [ -n "${UBOOT_EXTLINUX_FDT}" ]; then
         install -m 0644 ${B}/${DTBFILE}* ${D}/boot/
     fi
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/extlinux/extlinux.conf ${D}/boot/extlinux/
     touch ${DEPLOY_DIR_IMAGE}/extra_uEnv.txt
 }
 
