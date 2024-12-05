@@ -13,6 +13,14 @@ TEGRA_SOCNAME_SHORT = "${@d.getVar('SOC_FAMILY')[0:1] + d.getVar('SOC_FAMILY')[-
 BACKSLASH_X_01 = "${@'\\' + 'x01'}"
 BADPAGE_SIZE = "8192"
 
+# Hack: The fetch task is disabled on this recipe, so the following is just for the task signature.
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
+SRC_URI:append = "\
+    file://tegra234-mb1-bct-gpio-p3767-dp-a03.dtsi \
+    file://tegra234-mb1-bct-pinmux-p3767-dp-a03.dtsi \
+    file://tegra234-mb2-bct-misc-p3767-0000.dts \
+"
+
 do_compile() {
     prepare_badpage_mapfile
 }
@@ -39,6 +47,8 @@ prepare_badpage_mapfile()  {
     esac
 }
 
+CUSTOM_DTSI_DIR := "${THISDIR}/${BPN}"
+
 do_install() {
     install -d ${D}${datadir}/tegraflash
     install -m 0644 ${S}/nv_tegra/bsp_version ${D}${datadir}/tegraflash/
@@ -49,6 +59,10 @@ do_install() {
 
     [ -z "${ODMFUSE_FILE}" ] || install -m 0644 ${ODMFUSE_FILE} ${D}${datadir}/tegraflash/odmfuse_pkc_${MACHINE}.xml
     install -m 0644 ${BCT_TEMPLATE} ${D}${datadir}/tegraflash/${EMMC_BCT}
+
+    install -m 0644 ${CUSTOM_DTSI_DIR}/tegra234-mb1-bct-gpio-p3767-dp-a03.dtsi ${D}${datadir}/tegraflash/
+    install -m 0644 ${CUSTOM_DTSI_DIR}/tegra234-mb1-bct-pinmux-p3767-dp-a03.dtsi ${D}${datadir}/tegraflash/
+    install -m 0644 ${CUSTOM_DTSI_DIR}/tegra234-mb2-bct-misc-p3767-0000.dts ${D}${datadir}/tegraflash/
 }
 
 install_other_boot_firmware_files() {

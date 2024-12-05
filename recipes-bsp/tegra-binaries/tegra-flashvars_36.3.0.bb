@@ -35,3 +35,5 @@ do_install() {
 
 FILES:${PN} = "${datadir}/tegraflash"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
